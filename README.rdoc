@@ -1,0 +1,27 @@
+= Payr
+== Installation
+
+gem "payr"
+
+rails generate payr:install
+
+fill config/initializers/payr.rb with your own values
+
+
+create paybox client :
+
+paybox_client = Payr::Client.new
+@paybox_params = paybox_client.get_paybox_params_from {	
+																												paybox_return_values: {}, # see paybox documentation
+																												command_id: "", # the command identifier
+																												buyer_email: "", # buyer's email
+																												total_price: "", # total price in cents
+																											}
+
+
+then into the view use helper
+
+paybox_hidden_fields @paybox_params
+form_tag(Payr.paybox_url)
+
+This project rocks and uses MIT-LICENSE.
