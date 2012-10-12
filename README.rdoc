@@ -1,3 +1,7 @@
+== WARNING
+
+== Repo not stable yet.
+
 = Payr
 == Installation
 
