@@ -8,12 +8,12 @@ class Payr::BillsController < ApplicationController
   CANCELLED = "cancelled"
 
   def pay
-  	bill = Payr::Bill.new(buyer_id: params[:buyer][:id], 
+  	@bill = Payr::Bill.new(buyer_id: params[:buyer][:id], 
   								  			amount: params[:total_price], 
   								  			article_id: params[:article_id], 
   								  			state: UNPROCESSED)
-  	if bill.save
-			@paybox_params = Payr::Client.new.get_paybox_params_from	command_id: bill.id, 
+  	if @bill.save
+			@paybox_params = Payr::Client.new.get_paybox_params_from	command_id: @bill.id, 
 																																buyer_email: params[:buyer][:email], 
 																																total_price: params[:total_price],
 																																callbacks:  { 
@@ -41,8 +41,8 @@ class Payr::BillsController < ApplicationController
   	if params[:error] == "00000"
   		change_status params[:ref], PAID
   	else
-  		bill = Payr::Bill.find(params[:ref])
-			bill.update_attribute(:error_code, params[:error])
+  		@bill = Payr::Bill.find(params[:ref])
+			@bill.update_attribute(:error_code, params[:error])
   	end
   	render nothing: true, :status => 200, :content_type => 'text/html'
   end
@@ -52,9 +52,9 @@ class Payr::BillsController < ApplicationController
 
   protected
   def change_status id, status, error=nil
-  	bill = Payr::Bill.find(id)
-		bill.update_attribute(:state, status)
-		bill.update_attribute(:error_code, error) unless error.nil?
+  	@bill = Payr::Bill.find(id)
+		@bill.update_attribute(:state, status)
+		@bill.update_attribute(:error_code, error) unless error.nil?
   end
 
 end
