@@ -23,9 +23,7 @@ Payr.setup do |config|
 	# config.paybox_url_back_one = nil
 	# config.paybox_url_back_two = nil
 
-
 	config.callback_values = { amount:"m", ref:"r", auto:"a", error:"e", signature:"k" }
-
 
 	# Optionnal config : if not null, choose on behalf of the user the type of paiement. 
 	# EX: "CARTE". Look at the paybox documentation for more
