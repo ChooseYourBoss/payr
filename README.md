@@ -128,6 +128,11 @@ The controller could look something like this for example :
 		layout "simply_blue_simple"
 
 		# But you can also rewrite the actions
+		# to redirect to a specific action, for example :
+		def paid
+			super
+			redirect_to new_recruiters_offer_path
+		end
 	end
 ```
 
