@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    payr (0.0.1)
+    payr (0.5.1)
       rails (~> 3.2.8)
 
 GEM

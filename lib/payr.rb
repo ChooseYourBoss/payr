@@ -43,14 +43,14 @@ module Payr
 
 	# Need to improve that by working on the rails/routes.rb file and adding a special mapping?
 	mattr_accessor :callback_route
-	@@callback_route = "#{Rails.root}/bills/paid"
+	@@callback_route = nil
 	mattr_accessor :callback_refused_route
-	@@callback_refused_route = "#{Rails.root}/bills/refused"
+	@@callback_refused_route = nil
 	mattr_accessor :callback_cancelled_route
-	@@callback_cancelled_route = "#{Rails.root}/bills/cancelled"
+	@@callback_cancelled_route = nil
 
 	mattr_accessor :ipn_route
-	@@callback_cancelled_route = "#{Rails.root}/bills/ipn"
+	@@ipn_route = nil
 
 	mattr_accessor :callback_values
 	@@callback_values = { amount:"m", ref:"r", auto:"a", error:"e", signature:"k" }

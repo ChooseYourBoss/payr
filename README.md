@@ -63,6 +63,10 @@ Payr.setup do |config|
 	# config.paybox_url_back_one = nil
 	# config.paybox_url_back_two = nil
 
+	#
+	# Those are used if you want to totally redo the controllers and 
+	# Just use the helpers
+	# 
 	config.callback_route = nil
 	config.callback_refused_route = nil
 	config.callback_cancelled_route = nil
@@ -83,7 +87,9 @@ end
 
 ```
 
-### Routes And Custom Controller
+### Routes And "AutoCustom" Controller =)
+
+if you just want to use the helpers and don't care about the controllers and the bill model, skip this part 
 
 You can use the routes by default by adding this to your config/routes.rb
 
@@ -162,7 +168,10 @@ end
 then into your view use the route :
 
 ```ruby
-payr_bills_pay_path(article_id: pack.id, buyer: {email: current_recruiter.email, id: current_recruiter.id }, total_price: pack.price.to_i*100)
+payr_bills_pay_path(article_id: pack.id, 
+									  buyer: { email: current_recruiter.email, 
+									  				 id: current_recruiter.id }, 
+									  total_price: pack.price.to_i*100 )
 ```
 
 This will call the bills#action and then redirect the user to the paybox paiement page.
@@ -171,6 +180,41 @@ To finish, you need to add this to the application.js
 
 ```javascript
 //= require payr/bills
+```
+
+### I Don't Care about your super CallbacksController and your Super Bill Model
+
+## YEAH, I just want the backbone : form helpers, signature checker
+
+Okay, this is possible :
+
+- Don't use the rails generator payr:install
+
+- copy the payr.rb file from the step above into the config/initializers folder.
+
+
+Use the following helpers :
+```ruby
+# to check signature responses in your callback controllers
+before_filter :check_response
+before_filter :check_ipn_response
+
+# To get all the paybox fields in a hash
+@paybox_params = Payr::Client.new.get_paybox_params_from	command_id: bill.id, 
+																																buyer_email: params[:buyer_email], 
+																																total_price: params[:total_price],
+																																callbacks:  { 
+																																							paid: callback_paid_url, 
+																																							refused: callback_refused_url,   
+																																							cancelled: callback_cancelled_url,
+																																							ipn: callback_ipn_url
+																																						}
+
+# To generate the fields into the view 
+# just the fields
+paybox_hidden_fields @paybox_params
+# the entire form
+paybox_form submit_name, @paybox_params
 ```
 
 This project rocks and uses MIT-LICENSE.
