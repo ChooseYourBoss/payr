@@ -15,6 +15,7 @@ describe Payr::Client do
 			c.rang = nil
 			c.paybox_id = nil
 			c.secret_key = nil
+			c.callback_values = { amount:"m", ref:"r", auto:"a", error:"e", signature:"k" }
 		end
 	end
   let(:payr) { Payr::Client.new }
@@ -28,14 +29,14 @@ describe Payr::Client do
       end
     end
     context "when parameters are complete" do
-      let(:params) { {paybox_return_values: {stuff: "YAY"}, buyer_email: "monkey@payr.com", command_id: "cmd", total_price: 1000 }}
+      let(:params) { {callbacks: {paid: "YAY", refused: "YAY", cancelled: "YAY"}, buyer_email: "monkey@payr.com", command_id: "cmd", total_price: 1000 }}
     
       before { @returned_hash = payr.get_paybox_params_from params}
       subject { @returned_hash }
       its(:keys) { should include :pbx_identifiant, :pbx_rang, :pbx_total, :pbx_devise, :pbx_cmd, :pbx_retour, :pbx_porteur, :pbx_hash, :pbx_time, :pbx_hmac }
     end
     context "when very specific parameters" do
-    	let(:params) { { buyer_email: "coste.vincent@gmail.com", command_id: "123456", total_price: 10000 }}
+    	let(:params) { {callbacks: {paid: "YAY", refused: "YAY", cancelled: "YAY"}, buyer_email: "coste.vincent@gmail.com", command_id: "123456", total_price: 10000 }}
       before do
 				Payr.setup do |c|
 					c.site_id = 1999888
@@ -52,7 +53,7 @@ describe Payr::Client do
       subject { @returned_hash }
 
       it "should have a specific hmac" do
-      	@returned_hash[:pbx_hmac].should eql("636BCE0893A38FA8ACB5427669BA47DB6ACC1AF6B46840DA6DF8134A8EA3F41A42690467F302F0B5B07CBC4D851184D700724BD55B71CB12D68E6B544D6DF507")
+      	@returned_hash[:pbx_hmac].should eql("1972B74DA678CF739F4FF7297280BC981030C7C217EC9C1A6639FD6C3BE4F96AC9946C5118BE94D6ED39C22B436ACA27E63A70DDAFC34A9BE5080E5424744496")
       end
 
     end
@@ -105,6 +106,15 @@ describe Payr::Client do
 		before { @verified =  payr.send(:check_response_verify, "params1=1&params2=2", signature, pkey.public_key)}
 		subject { @verified } 
 	  it { should be_true }
+	end
+
+	describe ".re_build_ipn_query" do
+		before do 
+			Payr.setup { |config| config.callback_values = { params1:1 }   }
+			@query =  payr.send(:re_build_ipn_query, { params1:1, params2:2, signature:"1"} )
+		end
+		subject { @query } 
+	  it { should eq("params1=1") }
 	end
 	describe ".re_build_query" do
 		let(:params){ "?params1=1&params2=2&signature=XXXX" }

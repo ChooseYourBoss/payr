@@ -27,8 +27,6 @@ Payr.setup do |config|
 	config.callback_refused_route = nil
 	config.callback_cancelled_route = nil
 
-	config.ipn_route = nil
-
 	config.callback_values = { amount:"m", ref:"r", auto:"a", error:"e", signature:"k" }
 
 

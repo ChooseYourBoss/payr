@@ -3,7 +3,6 @@ require "base64"
 
 module Payr
 	class Client
-
 		def get_paybox_params_from params
 			raise ArgumentError if params[:command_id].nil? || params[:buyer_email].nil? || params[:total_price].nil?
 			command_timestamp = Time.now.utc.iso8601
@@ -22,25 +21,53 @@ module Payr
 			# optionnal parameters
 			returned_hash.merge!(pbx_typepaiement: Payr.typepaiement, 
 													 pbx_typepcarte: Payr.typecard) unless Payr.typepaiement.nil? || Payr.typecard.nil?
-			returned_hash.merge!(pbx_effectue: Payr.callback_route,
-													 pbx_refuse: 	 Payr.callback_refused_route,
-													 pbx_annule: 	 Payr.callback_cancelled_route) unless Payr.callback_route.nil?
-
+			if Payr.callback_route
+				returned_hash.merge!(pbx_effectue: Payr.callback_route,
+													 	 pbx_refuse: 	 Payr.callback_refused_route,
+													   pbx_annule: 	 Payr.callback_cancelled_route,
+													   )
+			else
+				raise ArgumentError if params[:callbacks].nil?
+				returned_hash.merge!(pbx_effectue: params[:callbacks][:paid],
+													 	 pbx_refuse: 	 params[:callbacks][:refused],
+													   pbx_annule: 	 params[:callbacks][:cancelled],
+													   pbx_repondre_a: params[:callbacks][:cancelled])
+			end
+			
+			if Payr.ipn_route
+				returned_hash.merge!(pbx_repondre_a: Payr.ipn_route)
+			elsif params[:callbacks][:ipn]
+				returned_hash.merge!(pbx_repondre_a: params[:callbacks][:ipn])
+			end
 			base_params = self.to_base_params(returned_hash)			
 			returned_hash.merge(pbx_hmac: self.generate_hmac(base_params))
 		end
 
 
-		def check_response params
-			query = re_build_query params
-			signature = get_signature params
-			public_key = OpenSSL::PKey::RSA.new(File.read(File.expand_path(File.dirname(__FILE__) + '/keys/pubkey.pem')))
-			check_response_verify query, Base64.decode64(Rack::Utils.unescape(signature)), public_key
+		def check_response query
+			params = re_build_query query
+			signature = get_signature query
+			signed? params, signature
+		end
+
+		def check_response_ipn params
+			signature = params[:signature]
+			query_params = re_build_ipn_query params
+			signed? query_params, signature
 		end
 
   	protected
+  	def signed? params, signature
+  		public_key = OpenSSL::PKey::RSA.new(File.read(File.expand_path(File.dirname(__FILE__) + '/keys/pubkey.pem')))
+			check_response_verify params, Base64.decode64(Rack::Utils.unescape(signature)), public_key
+  	end
   	def get_signature params
   		 params[params.index("&signature=")+"&signature=".length..params.length]
+  	end
+  	def re_build_ipn_query params
+  		Payr.callback_values.keys.collect do |key|
+				"#{key}=#{params[key]}" unless key == :signature
+			end.compact.join("&")
   	end
   	def re_build_query params
 			params[params.index("?")+1..params.index("&signature")-1]
