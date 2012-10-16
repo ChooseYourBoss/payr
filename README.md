@@ -171,7 +171,7 @@ To finish, you need to add this to the application.js
 //= require payr/bills
 ```
 
-### I Don't Care about your super CallbacksController and your Super Bill Model
+# I Don't Care about your super CallbacksController and your Super Bill Model
 
 ## YEAH, I just want the backbone : form helpers, signature checker
 
@@ -190,14 +190,14 @@ before_filter :check_ipn_response
 
 # To get all the paybox fields in a hash
 @paybox_params = Payr::Client.new.get_paybox_params_from	command_id: bill.id, 
-																																buyer_email: params[:buyer_email], 
-																																total_price: params[:total_price],
-																																callbacks:  { 
-																																							paid: callback_paid_url, 
-																																							refused: callback_refused_url,   
-																																							cancelled: callback_cancelled_url,
-																																							ipn: callback_ipn_url
-																																						}
+																													buyer_email: params[:buyer_email], 
+																													total_price: params[:total_price],
+																													callbacks:  { 
+																																				paid: callback_paid_url, 
+																																				refused: callback_refused_url,   
+																																				cancelled: callback_cancelled_url,
+																																				ipn: callback_ipn_url
+																																			}
 
 # To generate the fields into the view 
 # just the fields
