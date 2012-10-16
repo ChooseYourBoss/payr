@@ -165,6 +165,16 @@ payr_bills_pay_path(article_id: pack.id,
 
 This will call the bills#action and then redirect the user to the paybox paiement page.
 
+You can also override the views by creating the appropriate files :
+```sh
+$ > ls app/views/paiement/callbacks
+		paid.html.haml
+		refused.html.haml
+		cancelled.html.haml
+		failure.html.haml
+```
+
+
 To finish, you need to add this to the application.js
 
 ```javascript
