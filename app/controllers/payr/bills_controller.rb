@@ -13,9 +13,8 @@ class Payr::BillsController < ApplicationController
   								  			article_id: params[:article_id], 
   								  			state: UNPROCESSED)
   	if bill.save
-  		#params[:buyer][:email]
 			@paybox_params = Payr::Client.new.get_paybox_params_from	command_id: bill.id, 
-																																buyer_email: "coste.vincent@gmail.com", 
+																																buyer_email: params[:buyer][:email], 
 																																total_price: params[:total_price],
 																																callbacks:  { 
 																																							paid: payr_bills_paid_url, 

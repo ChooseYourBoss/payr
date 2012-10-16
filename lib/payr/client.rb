@@ -5,6 +5,7 @@ module Payr
 	class Client
 		def get_paybox_params_from params
 			raise ArgumentError if params[:command_id].nil? || params[:buyer_email].nil? || params[:total_price].nil?
+			raise ArgumentError if params[:callbacks].nil?
 			command_timestamp = Time.now.utc.iso8601
 			returned_hash = { pbx_site: Payr.site_id, 
 												pbx_rang: Payr.rang,
@@ -21,24 +22,25 @@ module Payr
 			# optionnal parameters
 			returned_hash.merge!(pbx_typepaiement: Payr.typepaiement, 
 													 pbx_typepcarte: Payr.typecard) unless Payr.typepaiement.nil? || Payr.typecard.nil?
-			if Payr.callback_route
-				returned_hash.merge!(pbx_effectue: Payr.callback_route,
-													 	 pbx_refuse: 	 Payr.callback_refused_route,
-													   pbx_annule: 	 Payr.callback_cancelled_route,
-													   )
-			else
-				raise ArgumentError if params[:callbacks].nil?
+			# if Payr.callback_route
+			# 	returned_hash.merge!(pbx_effectue: Payr.callback_route,
+			# 										 	 pbx_refuse: 	 Payr.callback_refused_route,
+			# 										   pbx_annule: 	 Payr.callback_cancelled_route,
+			# 										   )
+			# else
+				
 				returned_hash.merge!(pbx_effectue: params[:callbacks][:paid],
 													 	 pbx_refuse: 	 params[:callbacks][:refused],
 													   pbx_annule: 	 params[:callbacks][:cancelled],
 													   pbx_repondre_a: params[:callbacks][:cancelled])
-			end
+			#end
 			
-			if Payr.ipn_route
-				returned_hash.merge!(pbx_repondre_a: Payr.ipn_route)
-			elsif params[:callbacks][:ipn]
-				returned_hash.merge!(pbx_repondre_a: params[:callbacks][:ipn])
-			end
+			# if Payr.ipn_route
+			# 	returned_hash.merge!(pbx_repondre_a: Payr.ipn_route)
+			#elsif params[:callbacks][:ipn]
+			
+			returned_hash.merge!(pbx_repondre_a: params[:callbacks][:ipn])
+			#end
 			base_params = self.to_base_params(returned_hash)			
 			returned_hash.merge(pbx_hmac: self.generate_hmac(base_params))
 		end
