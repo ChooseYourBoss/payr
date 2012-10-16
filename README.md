@@ -138,26 +138,25 @@ The controller could look something like this for example :
 
 Basically, thoses actions do :
 ```ruby
-	#
-	# when calling payr_bills_pay_path (talking about that later) 
-	# will create a bill record with the article id, the buyer id
-	# the amount and the paiement status
-	# the render a transitionnal page which redirects to the paiement website
-	def pay
-	end
+#
+# when calling payr_bills_pay_path (talking about that later) 
+# will create a bill record with the article id, the buyer id
+# the amount and the paiement status
+# the render a transitionnal page which redirects to the paiement website
+def pay
+end
 
-	# Callbacks methods as defined in paybox system 
-	# changes the status of the bill
-	def paid
-	end
-  def refused
-  end
-  def cancelled
-  end
-  # server to server callback
-  def ipn
-  end
-
+# Callbacks methods as defined in paybox system 
+# changes the status of the bill
+def paid
+end
+def refused
+end
+def cancelled
+end
+# server to server callback
+def ipn
+end
 ```
 
 then into your view use the route :
