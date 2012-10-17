@@ -2,3 +2,9 @@ fr:
   payr:
     pay:
       redirected: Vous êtes redirigés vers le site de paiement. Merci de patienter...
+    paid:
+      redirected: Merci de votre paiement.
+    cancelled:
+      redirected: Vous avez annulé le paiement.
+    refused:
+      redirected: Votre paiement à été refusé.

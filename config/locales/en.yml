@@ -1,0 +1,10 @@
+fr:
+  payr:
+    pay:
+      redirected: You are being redirected on the paiement website
+    paid:
+      redirected: Thanks for the paiement.
+    cancelled:
+      redirected: You cancelled you paiement.
+    refused:
+      redirected: Your paiement has been refused.
