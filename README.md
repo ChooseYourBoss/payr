@@ -221,4 +221,18 @@ paybox_hidden_fields @paybox_params
 paybox_form submit_name, @paybox_params
 ```
 
+### I WANNA HELP ?
+
+For this no problem friend :
+- fork
+- add tests
+- run tests
+
+```sh
+rake
+````
+- pull request
+
+i'll gladly add your work =)
+
 This project rocks and uses MIT-LICENSE.
