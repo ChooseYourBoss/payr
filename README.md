@@ -1,7 +1,3 @@
-## WARNING
-
-## Repo not stable yet.
-
 # Payr : paybox system paiement made easy
 
 ## Installation
@@ -131,7 +127,10 @@ The controller could look something like this for example :
 		# to redirect to a specific action, for example :
 		def paid
 			super
-			redirect_to new_recruiters_offer_path
+			bill = Payr::Bill.find params[:ref]
+			pack = Pack.find bill.article_id
+			current_buyer.add_pack pack
+			redirect_to new_offer_path
 		end
 	end
 ```
