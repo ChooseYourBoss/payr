@@ -2,7 +2,7 @@
 <h1> <%= t("payr.pay.redirected")%> </h1>
 
 <p>
-  <form id="payrForm" action="<%= Payr.paybox_url %>" method='POST'>
+  <form id="payrForm" action="<%= @payr.select_server_url %>" method='POST'>
   	<%= paybox_hidden_fields @paybox_params %>
   </form>
 </p>

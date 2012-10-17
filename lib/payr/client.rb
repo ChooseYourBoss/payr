@@ -1,5 +1,7 @@
 require "openssl"
 require "base64"
+require "net/https"
+require "uri"
 
 module Payr
 	class Client
@@ -18,30 +20,19 @@ module Payr
 												pbx_hash: Payr.hash.upcase,
 												pbx_time: command_timestamp }
 
-
 			# optionnal parameters
 			returned_hash.merge!(pbx_typepaiement: Payr.typepaiement, 
 													 pbx_typepcarte: Payr.typecard) unless Payr.typepaiement.nil? || Payr.typecard.nil?
-			# if Payr.callback_route
-			# 	returned_hash.merge!(pbx_effectue: Payr.callback_route,
-			# 										 	 pbx_refuse: 	 Payr.callback_refused_route,
-			# 										   pbx_annule: 	 Payr.callback_cancelled_route,
-			# 										   )
-			# else
-				
-				returned_hash.merge!(pbx_effectue: params[:callbacks][:paid],
-													 	 pbx_refuse: 	 params[:callbacks][:refused],
-													   pbx_annule: 	 params[:callbacks][:cancelled],
-													   pbx_repondre_a: params[:callbacks][:cancelled])
-			#end
-			
-			# if Payr.ipn_route
-			# 	returned_hash.merge!(pbx_repondre_a: Payr.ipn_route)
-			#elsif params[:callbacks][:ipn]
-			
+
+			returned_hash.merge!(pbx_effectue: params[:callbacks][:paid],
+												 	 pbx_refuse: 	 params[:callbacks][:refused],
+												   pbx_annule: 	 params[:callbacks][:cancelled],
+												   pbx_repondre_a: params[:callbacks][:cancelled])			
+
 			returned_hash.merge!(pbx_repondre_a: params[:callbacks][:ipn])
-			#end
+
 			base_params = self.to_base_params(returned_hash)			
+
 			returned_hash.merge(pbx_hmac: self.generate_hmac(base_params))
 		end
 
@@ -58,7 +49,23 @@ module Payr
 			signed? query_params, signature
 		end
 
+		def select_server_url
+			[Payr.paybox_url, Payr.paybox_url_back_one, Payr.paybox_url_back_two].each do |url|
+				return url if check_server_availability(url)
+			end
+		end
+		
+
   	protected
+  	def check_server_availability server_url
+			uri = URI.parse(server_url)
+			http = Net::HTTP.new(uri.host, uri.port)
+			http.use_ssl = true
+
+			request = Net::HTTP::Get.new(uri.request_uri)
+			response = http.request(request)
+			response.code == "200"
+		end
   	def signed? params, signature
   		public_key = OpenSSL::PKey::RSA.new(File.read(File.expand_path(File.dirname(__FILE__) + '/keys/pubkey.pem')))
 			check_response_verify params, Base64.decode64(Rack::Utils.unescape(signature)), public_key

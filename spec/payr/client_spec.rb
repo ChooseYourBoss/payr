@@ -129,4 +129,39 @@ describe Payr::Client do
 	  it {should eql("XXXX")}
 	end
 
+	describe ".check_server_availability" do
+		context "when URL is available" do
+			before do 
+				FakeWeb.register_uri(:get, "https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi", :status => ["200", "OK"])
+				@available = payr.send :check_server_availability, "https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi"	
+			end
+			subject { @available }
+	  	it { should be_true }
+		end
+		context "when URL is no available" do
+			before do 
+				FakeWeb.register_uri(:get, "https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi", :status => ["404", "NOT FOUND"])
+				@available = payr.send :check_server_availability, "https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi"	
+			end
+			subject { @available }
+	  	it { should be_false }
+		end
+	end
+
+	describe ".select_server_url" do
+	  before do 
+	  	Payr.setup { |p| 
+	  		p.paybox_url = "https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi"
+	  		p.paybox_url_back_one = "https://preprod-tpeweb.paybox.com/cgi/okay.cgi"
+	  		p.paybox_url_back_two = "https://preprod-tpeweb.paybox.com/cgi/notokay.cgi"
+	  	}
+			FakeWeb.register_uri(:get, "https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi", :status => ["404", "NOT FOUND"])
+			FakeWeb.register_uri(:get, "https://preprod-tpeweb.paybox.com/cgi/notokay.cgi", :status => ["404", "NOT FOUND"])
+			FakeWeb.register_uri(:get, "https://preprod-tpeweb.paybox.com/cgi/okay.cgi", :status => ["200", "NOT FOUND"])
+			@url = payr.select_server_url
+		end
+		subject { @url }
+		it { should eq("https://preprod-tpeweb.paybox.com/cgi/okay.cgi")}
+	end
+
 end

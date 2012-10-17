@@ -9,7 +9,7 @@ module Payr
 
 		def paybox_form submit_name, opts={}
 			raise ArgumentError if opts.blank?
-			("<form id='payrForm' action='#{Payr.paybox_url}' method='POST'>" +
+			("<form id='payrForm' action='#{Payr::Client.new.select_url}' method='POST'>" +
 			paybox_hidden_fields(opts) +
 			"<input type='submit' value='#{submit_name}'>" +
 		  "</form>").html_safe
