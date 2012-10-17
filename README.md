@@ -204,15 +204,16 @@ before_filter :check_response
 before_filter :check_ipn_response
 
 # To get all the paybox fields in a hash
-@paybox_params = Payr::Client.new.get_paybox_params_from	command_id: bill.id, 
-																													buyer_email: params[:buyer_email], 
-																													total_price: params[:total_price],
-																													callbacks:  { 
-																																				paid: callback_paid_url, 
-																																				refused: callback_refused_url,   
-																																				cancelled: callback_cancelled_url,
-																																				ipn: callback_ipn_url
-																																			}
+@payr = Payr::Client.new
+@paybox_params = @payr.get_paybox_params_from	command_id: bill.id, 
+																							buyer_email: params[:buyer_email], 
+																							total_price: params[:total_price],
+																							callbacks:  { 
+																														paid: callback_paid_url, 
+																														refused: callback_refused_url,   
+																														cancelled: callback_cancelled_url,
+																														ipn: callback_ipn_url
+																													}
 
 # To generate the fields into the view 
 # just the fields
