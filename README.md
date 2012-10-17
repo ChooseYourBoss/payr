@@ -235,4 +235,9 @@ rake
 
 i'll gladly add your work =)
 
+### TODO
+
+- add helper "after_payment_path", "after_cancelled_path" etc that can be overrided to avoid to override BillsControllers
+- improve documentation about what BillController does
+
 This project rocks and uses MIT-LICENSE.
