@@ -6,6 +6,7 @@ class Payr::BillsController < ApplicationController
   PAID = "paid"
   REFUSED = "refused"
   CANCELLED = "cancelled"
+  SIGN_ERROR = "bad_signature"
   NO_ERROR = "00000"
   def pay
   	@bill = Payr::Bill.new(buyer_id: params[:buyer][:id], 
@@ -49,6 +50,7 @@ class Payr::BillsController < ApplicationController
   end
 
   def failure
+    change_status params[:ref], SIGN_ERROR, params[:error]
   end
 
   protected

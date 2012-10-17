@@ -8,3 +8,5 @@ fr:
       redirected: You cancelled you paiement.
     refused:
       redirected: Your paiement has been refused.
+    failure:
+      redirected: There was a communication problem with paybox. 
