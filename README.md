@@ -82,11 +82,12 @@ You can use the routes by default by adding this to your config/routes.rb
 	payr_routes
 ```
 
-This will generate 4 routes :
+This will generate 5 routes :
 
 ```sh
 $ > rake routes
 	payr_bills_pay          GET        /bills/pay(.:format)                payr/bills#pay
+	payr_bills_pay          POST       /bills/pay(.:format)                payr/bills#pay
 	payr_bills_paid         GET        /bills/paid(.:format)               payr/bills#paid
 	payr_bills_refused      GET        /bills/refused(.:format)            payr/bills#refused
 	payr_bills_cancelled    GET        /bills/cancelled(.:format)          payr/bills#cancelled
@@ -102,11 +103,12 @@ We recommand to override the controllers thoug. For that, define a custom contro
 
 If you created a app/controllers/paiement/callbacks controller.
 
-This will generate 4 routes :
+This will generate 5 routes :
 
 ```sh
 $ > rake routes
 	payr_bills_pay          GET        /paiement/callbacks/pay(.:format)                paiement/callbacks#pay
+	payr_bills_pay          POST       /paiement/callbacks/pay(.:format)                paiement/callbacks#pay
 	payr_bills_paid         GET        /paiement/callbacks/paid(.:format)               paiement/callbacks#paid
 	payr_bills_refused      GET        /paiement/callbacks/refused(.:format)            paiement/callbacks#refused
 	payr_bills_cancelled    GET        /paiement/callbacks/cancelled(.:format)          paiement/callbacks#cancelled
@@ -166,7 +168,14 @@ payr_bills_pay_path(article_id: pack.id,
 									  				 id: current_recruiter.id }, 
 									  total_price: pack.price.to_i*100 )
 ```
-
+You can also use the bill_reference parameter if you want to have a custom bill_parameter :
+```ruby
+payr_bills_pay_path(article_id: pack.id, 
+									  buyer: { email: current_recruiter.email, 
+									  				 id: current_recruiter.id }, 
+									  total_price: pack.price.to_i*100,
+									  bill_reference: "F00000001" )
+```
 This will call the bills#action and then redirect the user to the paybox paiement page.
 
 You can also override the views by creating the appropriate files :
