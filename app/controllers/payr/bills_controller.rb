@@ -11,8 +11,9 @@ class Payr::BillsController < ApplicationController
   def pay
     @bill = Payr::Bill.new(buyer_id: params[:buyer][:id], 
                            amount: params[:total_price], 
-                           article_id: params[:article_id], 
-                           state: UNPROCESSED)
+                           article_id: params[:article_id],
+                           state: UNPROCESSED,
+                           bill_reference: params[:bill_reference])
     @payr = Payr::Client.new
     if @bill.save
       @paybox_params = @payr.get_paybox_params_from command_id: @bill.id, 

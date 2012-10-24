@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121015135255) do
+ActiveRecord::Schema.define(:version => 20121024091730) do
 
   create_table "bills", :force => true do |t|
     t.integer  "buyer_id"
@@ -19,8 +19,9 @@ ActiveRecord::Schema.define(:version => 20121015135255) do
     t.integer  "amount"
     t.string   "state"
     t.string   "error_code"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.string   "bill_reference"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
 end

@@ -6,6 +6,7 @@ class CreateBillsTable < ActiveRecord::Migration
       t.integer :amount
       t.string :state
       t.string :error_code
+      t.string :bill_reference
       t.timestamps
     end
   end
