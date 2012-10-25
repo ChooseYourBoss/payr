@@ -194,6 +194,16 @@ To finish, you need to add this to the application.js
 //= require payr/bills
 ```
 
+### Tests
+
+If you wanna test your own callbacks, you can mock up the filters like this :
+```ruby
+before { Payr::Client.any_instance.should_receive(:check_response).and_return(true) } 
+before { Payr::Client.any_instance.should_receive(:check_response_ipn).and_return(true) } 
+
+```
+
+
 # I Don't Care about your super CallbacksController and your Super Bill Model
 
 ## YEAH, I just want the backbone : form helpers, signature checker
