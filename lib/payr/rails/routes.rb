@@ -8,7 +8,7 @@ module ActionDispatch::Routing
 					get "payr/bills/pay", as: "payr_bills_pay"
 					post "payr/bills/pay", as: "payr_bills_pay"
 				end
-			["paid", "refused", "cancelled", "ipn", "failure"].each do |action|
+			%w(paid refused cancelled ipn failure).each do |action|
 				if options && options[:callback_controller]
 					get "#{options[:callback_controller]}/#{action}", as: "payr_bills_#{action}"
 				else

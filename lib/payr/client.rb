@@ -74,9 +74,7 @@ module Payr
   		 params[params.index("&signature=")+"&signature=".length..params.length]
   	end
   	def re_build_ipn_query params
-  		Payr.callback_values.keys.collect do |key|
-				"#{key}=#{params[key]}" unless key == :signature
-			end.compact.join("&")
+  		Payr.callback_values.except(:signature).to_param
   	end
   	def re_build_query params
 			params[params.index("?")+1..params.index("&signature")-1]
@@ -91,9 +89,9 @@ module Payr
 			OpenSSL::HMAC.hexdigest(OpenSSL::Digest::Digest.new(Payr.hash.to_s), binary_key, base_params).upcase
 		end
 
-  	def to_base_params params={}  
+  	def to_base_params params={} 
   		params.to_a.collect do |pair|
-  			"#{pair[0].upcase}=#{pair[1]}"
+  		 	"#{pair[0].upcase}=#{pair[1]}"
   		end.join("&")
   	end
 
