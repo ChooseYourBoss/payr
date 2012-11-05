@@ -74,7 +74,9 @@ module Payr
   		 params[params.index("&signature=")+"&signature=".length..params.length]
   	end
   	def re_build_ipn_query params
-  		Payr.callback_values.except(:signature).to_param
+  		Payr.callback_values.keys.collect do |key|
+        "#{key}=#{params[key]}" unless key == :signature	
+      end.compact.join("&")
   	end
   	def re_build_query params
 			params[params.index("?")+1..params.index("&signature")-1]
