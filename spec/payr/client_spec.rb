@@ -109,12 +109,23 @@ describe Payr::Client do
 	end
 
 	describe ".re_build_ipn_query" do
-		before do 
-			Payr.setup { |config| config.callback_values = { params1:1 }   }
-			@query =  payr.send(:re_build_ipn_query, { params1:1, params2:2, signature:"1"} )
+		context "when one params" do
+		  before do 
+				Payr.setup { |config| config.callback_values = { params1:1 }   }
+				@query =  payr.send(:re_build_ipn_query, { params1:1, params2:2, signature:"1"} )
+			end
+			subject { @query } 
+	  	it { should eq("params1=1") }
 		end
-		subject { @query } 
-	  it { should eq("params1=1") }
+		context "when two params" do
+		  before do 
+				Payr.setup { |config| config.callback_values = { params1:1, params3:3 }   }
+				@query =  payr.send(:re_build_ipn_query, { params1:1, params2:2, params3:3, signature:"1"} )
+			end
+			subject { @query } 
+	  	it { should eq("params1=1&params3=3") }
+		end
+
 	end
 	describe ".re_build_query" do
 		let(:params){ "?params1=1&params2=2&signature=XXXX" }

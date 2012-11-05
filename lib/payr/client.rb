@@ -82,6 +82,8 @@ module Payr
 			params[params.index("?")+1..params.index("&signature")-1]
   	end
   	def check_response_verify params, signature, pub_key
+  		Rails.logger.info "signature = #{signature}"
+  		Rails.logger.info "params    = #{params}"
   		digest = OpenSSL::Digest::SHA1.new
 			pub_key.verify digest, signature, params
 		end
