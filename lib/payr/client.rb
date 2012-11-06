@@ -44,8 +44,8 @@ module Payr
 		end
 
 		def check_response_ipn params
-			signature = params[:signature]
-			query_params = re_build_ipn_query params
+			signature =  get_signature query#params[:signature]
+			query_params = re_build_query query#re_build_ipn_query params
 			signed? query_params, signature
 		end
 
