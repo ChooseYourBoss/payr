@@ -43,9 +43,10 @@ module Payr
 			signed? params, signature
 		end
 
+		# QQQ Improve to use re_build_ipn_query
 		def check_response_ipn params
-			signature = params[:signature]
-			query_params = re_build_ipn_query params
+			signature =  get_signature params
+			query_params = re_build_query params
 			signed? query_params, signature
 		end
 
@@ -55,7 +56,6 @@ module Payr
 			end
 		end
 		
-
   	protected
   	def check_server_availability server_url
 			uri = URI.parse(server_url)
