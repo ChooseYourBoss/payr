@@ -2,17 +2,12 @@ class Payr::BillsController < ApplicationController
   before_filter :check_response, except: [:pay, :failure, :ipn]
   before_filter :check_ipn_response, only: [:ipn]
 
-  UNPROCESSED = "unprocessed"
-  PAID = "paid"
-  REFUSED = "refused"
-  CANCELLED = "cancelled"
-  SIGN_ERROR = "bad_signature"
-  NO_ERROR = "00000"
+
   def pay
     @bill = Payr::Bill.new(buyer_id: params[:buyer][:id], 
                            amount: params[:total_price], 
                            article_id: params[:article_id],
-                           state: UNPROCESSED,
+                           state: Payr::Bill::UNPROCESSED,
                            bill_reference: params[:bill_reference])
     @payr = Payr::Client.new
     if @bill.save
@@ -29,20 +24,20 @@ class Payr::BillsController < ApplicationController
   end
 
   def paid
-    change_status params[:ref], PAID
+    change_status params[:ref], Payr::Bill::PAID
   end
 
   def refused
-    change_status params[:ref], REFUSED, params[:error]
+    change_status params[:ref], Payr::Bill::REFUSED, params[:error]
   end
 
   def cancelled
-    change_status params[:ref], CANCELLED, params[:error]
+    change_status params[:ref], Payr::Bill::CANCELLED, params[:error]
   end
 
   def ipn
-    if params[:error] == NO_ERROR
-      change_status params[:ref], PAID
+    if params[:error] == Payr::Bill::NO_ERROR
+      change_status params[:ref], Payr::Bill::PAID
     else
       @bill = Payr::Bill.find(params[:ref])
       @bill.update_attribute(:error_code, params[:error])
@@ -51,7 +46,7 @@ class Payr::BillsController < ApplicationController
   end
 
   def failure
-    change_status params[:ref], SIGN_ERROR, params[:error]
+    change_status params[:ref], Payr::Bill::SIGN_ERROR, params[:error]
   end
 
   protected
