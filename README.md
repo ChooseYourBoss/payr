@@ -137,6 +137,9 @@ The controller could look something like this for example :
 	end
 ```
 
+
+
+
 Basically, thoses actions do :
 ```ruby
 #
@@ -177,6 +180,38 @@ payr_bills_pay_path(article_id: pack.id,
 									  bill_reference: "F00000001" )
 ```
 This will call the bills#action and then redirect the user to the paybox paiement page.
+
+# /!\ There is a security flaw in the above lines
+
+While I'm correcting it, you MUST override the pay action, otherwise, someone could just make a get with the wanted amount and the wanted article.
+
+a possible overriding would be this:
+
+```ruby
+class Paiement::CallbacksController < Payr::BillsController
+	before_filter :authenticate_user!, except: [:ipn]
+	def pay
+	 	article = Pack.find params[:article_id]
+    @bill = Payr::Bill.new(buyer_id: current_user.id,
+                           amount: article.price,
+                           article_id: params[:article_id],
+                           state: Payr::Bill::UNPROCESSED,
+                           bill_reference: params[:bill_reference])
+    @payr = Payr::Client.new
+    if @bill.save
+      @paybox_params = @payr.get_paybox_params_from command_id: @bill.id, 
+                                                    buyer_email: current_recruiter.email,
+                                                    total_price: article.price,
+                                                    callbacks:  { 
+                                                                  paid: payr_bills_paid_url, 
+                                                                  refused: payr_bills_refused_url,   
+                                                                  cancelled: payr_bills_cancelled_url,
+                                                                  ipn: payr_bills_ipn_url
+																																}
+	end                                                               
+end
+```
+
 
 You can also override the views by creating the appropriate files :
 ```sh
