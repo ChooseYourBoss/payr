@@ -20,16 +20,17 @@ module Payr
 												pbx_hash: Payr.hash.upcase,
 												pbx_time: command_timestamp }
 
-			# optionnal parameters
-			returned_hash.merge!(pbx_typepaiement: Payr.typepaiement, 
-													 pbx_typepcarte: Payr.typecard) unless Payr.typepaiement.nil? || Payr.typecard.nil?
+
 
 			returned_hash.merge!(pbx_effectue: params[:callbacks][:paid],
 												 	 pbx_refuse: 	 params[:callbacks][:refused],
-												   pbx_annule: 	 params[:callbacks][:cancelled],
-												   pbx_repondre_a: params[:callbacks][:cancelled])			
+												   pbx_annule: 	 params[:callbacks][:cancelled])			
 
 			returned_hash.merge!(pbx_repondre_a: params[:callbacks][:ipn])
+
+            # optionnal parameters
+      returned_hash.merge!(pbx_typepaiement: Payr.typepaiement, 
+                           pbx_typepcarte: Payr.typecard) unless Payr.typepaiement.nil? || Payr.typecard.nil?
 
 			base_params = self.to_base_params(returned_hash)			
 

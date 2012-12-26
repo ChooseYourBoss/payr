@@ -1,7 +1,6 @@
 class Payr::BillsController < ApplicationController
-  before_filter :check_response, except: [:pay, :failure, :ipn]
+  before_filter :check_response, except: [:pay, :failure, :ipn, :cancelled]
   before_filter :check_ipn_response, only: [:ipn]
-
 
   def pay
     @bill = Payr::Bill.new(buyer_id: params[:buyer][:id], 
