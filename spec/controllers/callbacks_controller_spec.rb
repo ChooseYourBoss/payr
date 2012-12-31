@@ -76,14 +76,14 @@ describe CallbacksController do
         its(:state) { should eql("refused") }
         its(:error_code) { should eql("12") }
       end
-
+    end
+    describe "cancelled callback" do
       describe "GET cancelled" do
         before { get :cancelled, amount:"m", ref:bill.id, auto:"a", error:"123", signature:"k" }
         its(:state) { should eql("cancelled") }
         its(:error_code) { should eql("123") }
       end
     end
- 
   end
 
 end
