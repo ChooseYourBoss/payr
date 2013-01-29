@@ -35,6 +35,13 @@ describe Payr::Client do
       subject { @returned_hash }
       its(:keys) { should include :pbx_identifiant, :pbx_rang, :pbx_total, :pbx_devise, :pbx_cmd, :pbx_retour, :pbx_porteur, :pbx_hash, :pbx_time, :pbx_hmac }
     end
+    context "when parameters are complete and using the option params" do
+      let(:params) { {options: {pbx_option: "option"}, callbacks: {paid: "YAY", refused: "YAY", cancelled: "YAY"}, buyer_email: "monkey@payr.com", command_id: "cmd", total_price: 1000 }}
+    
+      before { @returned_hash = payr.get_paybox_params_from params}
+      subject { @returned_hash }
+      its(:keys) { should include :pbx_option, :pbx_identifiant, :pbx_rang, :pbx_total, :pbx_devise, :pbx_cmd, :pbx_retour, :pbx_porteur, :pbx_hash, :pbx_time, :pbx_hmac }
+    end
     context "when very specific parameters" do
     	let(:params) { {callbacks: {paid: "YAY", refused: "YAY", cancelled: "YAY"}, buyer_email: "coste.vincent@gmail.com", command_id: "123456", total_price: 10000 }}
       before do
@@ -57,6 +64,7 @@ describe Payr::Client do
       end
 
     end
+
   end
 
 	describe ".generate_hmac" do

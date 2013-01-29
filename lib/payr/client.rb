@@ -32,6 +32,7 @@ module Payr
       returned_hash.merge!(pbx_typepaiement: Payr.typepaiement, 
                            pbx_typepcarte: Payr.typecard) unless Payr.typepaiement.nil? || Payr.typecard.nil?
 
+      returned_hash.merge! params[:options] unless params[:options].blank?
 			base_params = self.to_base_params(returned_hash)			
 
 			returned_hash.merge(pbx_hmac: self.generate_hmac(base_params))
