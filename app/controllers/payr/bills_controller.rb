@@ -37,6 +37,7 @@ class Payr::BillsController < ApplicationController
   def ipn
     if params[:error] == Payr::Bill::NO_ERROR
       change_status params[:ref], Payr::Bill::PAID
+      @bill.update_attribute(:error_code, Payr::Bill::NO_ERROR)
     else
       @bill = Payr::Bill.find(params[:ref])
       @bill.update_attribute(:error_code, params[:error])
