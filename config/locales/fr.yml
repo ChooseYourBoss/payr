@@ -1,7 +1,7 @@
 fr:
   payr:
     pay:
-      redirected: Vous êtes redirigés vers le site de paiement. Merci de patienter...
+      redirected: Vous êtes redirigé vers le site de paiement. Merci de patienter...
     paid:
       redirected: Merci de votre paiement.
     cancelled:
@@ -9,4 +9,4 @@ fr:
     refused:
       redirected: Votre paiement à été refusé.
     failure:
-      redirected: Il y'a eu un problème avec paybox. 
+      redirected: Il y a eu un problème avec paybox. 
